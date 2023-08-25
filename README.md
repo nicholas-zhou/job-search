@@ -10,3 +10,5 @@ To use this script, create a .env file with:
   - from Twilio
 - PHONE_ONE
   - you can use as many phones as you want
+
+Also, make sure you have all the imported modules downloaded with pip
