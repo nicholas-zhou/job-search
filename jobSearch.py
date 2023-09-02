@@ -2,33 +2,34 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import sqlite3
-from twilio.rest import Client
 import os
 from dotenv import load_dotenv
+import smtplib
 
 # globals
 url = "https://github.com/ReaVNaiL/New-Grad-2024/tree/main"
 intervalSeconds = 3600 # scrape every hour
 jobData = []
+carriers = {
+    "att": "@mms.att.net",
+    "tmobile": "@tmomail.net",
+    "verizon": "@vtext.com",
+    "sprint": "@messaging.sprintpcs.com"
+}
 
 # load environment variables from .env file
 load_dotenv()
 
 # function to send SMS
-def sendSMS(message, pNum):
-    # twilio account sid and authentication token from env
-    accSID = os.getenv('ACCOUNT_SID')
-    authToken = os.getenv('AUTH_TOKEN')
+def sendSMS(message, pNum, carrier):
+    recipient = pNum + carriers[carrier]
+    auth = (os.getenv('EMAIL'), os.getenv('PW'))
 
-    # twilio phone number and number to send to
-    fromNum = os.getenv('TWILIO_PHONE')
-    toNum = pNum
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(auth[0], auth[1])
 
-    # client init
-    client = Client(accSID, authToken)
-
-    # send sms
-    client.messages.create(body=message, from_=fromNum, to=toNum)
+    server.sendmail(auth[0], recipient, message)
 
 # function to initialize sqlite database
 def dbInit():
@@ -108,9 +109,8 @@ def checkUpdates():
             for job in newJobs:
                 message += job['company'] + " is hiring " + job['role'] + " for these locations: " + job['location'] + "\n"
         if not message == "":
-            print(message)
-            # sendSMS(message, os.getenv('PHONE_ONE'))
-            # sendSMS(message, os.getenv('PHONE_TWO'))
+            sendSMS(message, os.getenv('PHONE_ONE'), "tmobile")
+            sendSMS(message, os.getenv('PHONE_TWO'), "tmobile")
 
     else:
         print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
