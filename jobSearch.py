@@ -40,7 +40,6 @@ def dbInit():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             company TEXT,
             location TEXT,
-            role TEXT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -73,7 +72,6 @@ def checkUpdates():
                     jobDict = {
                         "company": columns[0].get_text(),
                         "location": columns[1].get_text(),
-                        "role": columns[2].get_text(),
                     }
                     jobData.append(jobDict)
 
@@ -86,16 +84,14 @@ def checkUpdates():
         for update in jobData:
             company = update['company']
             location = update['location']
-            role = update['role']
             cursor.execute('SELECT id FROM jobs WHERE company = ?', (company,))
             result = cursor.fetchone()
             if not result:
                 newJobs.append({
                         "company": company,
                         "location": location,
-                        "role": role,
                     })
-                cursor.execute('INSERT INTO jobs (company, location, role) VALUES (?, ?, ?)', (company, location, role,))
+                cursor.execute('INSERT INTO jobs (company, location) VALUES (?, ?)', (company, location,))
         
         conn.commit()
         conn.close()
