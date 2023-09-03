@@ -107,7 +107,7 @@ def checkUpdates():
         elif newJobs:
             message = "New Job Updates:\n"
             for job in newJobs:
-                message += job['company'] + " is hiring " + job['role'] + " for these locations: " + job['location'] + "\n"
+                message += job['company'] + " is hiring for these locations: " + job['location'] + "\n"
         if not message == "":
             sendSMS(message, os.getenv('PHONE_ONE'), "tmobile")
             sendSMS(message, os.getenv('PHONE_TWO'), "tmobile")
