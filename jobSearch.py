@@ -105,8 +105,9 @@ def checkUpdates():
             for job in newJobs:
                 message += job['company'] + " is hiring for these locations: " + job['location'] + "\n"
         if not message == "":
-            sendSMS(message, os.getenv('PHONE_ONE'), "tmobile")
-            sendSMS(message, os.getenv('PHONE_TWO'), "tmobile")
+            # call sendSMS here as many times as you like using this format
+            sendSMS(message, os.getenv('PHONE_ONE'), os.getenv('CARRIER_ONE'))
+            sendSMS(message, os.getenv('PHONE_TWO'), os.getenv('CARRIER_TWO'))
 
     else:
         print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
